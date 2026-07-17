@@ -1,4 +1,8 @@
+pip install -r docs/requirements.txt
+
 set CL="/Zc:preprocessor"
+git clone https://github.com/stran9682/detectron2
+python -m pip install -e detectron2 --no-build-isolation
 
 echo Installing a third-party 2D keypoint detector
 python scripts_py/install_pose2d.py
