@@ -1148,7 +1148,7 @@ def init_gl_util():
         glutInitWindowSize(g_Width,g_Height)
 
         global g_winID
-        g_winID = glutCreateWindow("3D View")
+        g_winID = glutCreateWindow(b"3D View")
         init()
         # init_minimum()
         glutReshapeFunc(reshape)

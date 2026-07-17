@@ -28,7 +28,7 @@ class glRenderer:
             glutInitDisplayMode(self.display_mode)
             glutInitWindowSize(self.width, self.height)
             glutInitWindowPosition(0, 0)
-            _glut_window = glutCreateWindow("GL_Renderer")
+            _glut_window = glutCreateWindow(b"GL_Renderer")
 
 
             glEnable(GL_DEPTH_CLAMP)

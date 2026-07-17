@@ -17,6 +17,9 @@ tensorboardX
 tqdm
 jinja2
 smplx
-sklearn
-opendr
-chumpy
+scikit-learn
+chumpy<0.67
+requests
+gitpython
+huggingface_hub
+torchgeometry
