@@ -3,9 +3,9 @@
 import numpy as np
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from renderer.shaders.framework import *
+from .shaders.framework import *
 
-from renderer.glRenderer import glRenderer
+from .glRenderer import glRenderer
 
 _glut_window = None
 

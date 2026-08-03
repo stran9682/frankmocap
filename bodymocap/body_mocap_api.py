@@ -1,5 +1,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 
+import os
+
 import cv2
 import sys
 import torch
@@ -7,11 +9,11 @@ import numpy as np
 import pickle 
 from torchvision.transforms import Normalize
 
-from bodymocap.models import hmr, SMPL, SMPLX
-from bodymocap import constants
-from bodymocap.utils.imutils import crop, crop_bboxInfo, process_image_bbox, process_image_keypoints, bbox_from_keypoints
-from mocap_utils.coordconv import convert_smpl_to_bbox, convert_bbox_to_oriIm
-import mocap_utils.geometry_utils as gu
+from .models import hmr, SMPL, SMPLX
+from . import constants
+from .utils.imutils import crop, crop_bboxInfo, process_image_bbox, process_image_keypoints, bbox_from_keypoints
+from ..mocap_utils.coordconv import convert_smpl_to_bbox, convert_bbox_to_oriIm
+from ..mocap_utils import geometry_utils as gu
 
 
 class BodyMocap(object):
@@ -34,7 +36,10 @@ class BodyMocap(object):
             self.use_smplx = False
             
         #Load pre-trained neural network 
-        SMPL_MEAN_PARAMS = './extra_data/body_module/data_from_spin/smpl_mean_params.npz'
+        CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+        SMPL_MEAN_PARAMS = os.path.join(CURRENT_DIR, "..", "extra_data", "body_module", "data_from_spin", "smpl_mean_params.npz")
+        SMPL_MEAN_PARAMS = os.path.abspath(SMPL_MEAN_PARAMS)
+
         self.model_regressor = hmr(SMPL_MEAN_PARAMS).to(self.device)
         checkpoint = torch.load(regressor_checkpoint)
         self.model_regressor.load_state_dict(checkpoint['model'], strict=False)

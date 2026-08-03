@@ -7,9 +7,9 @@ import numpy as np
 import cv2
 from torchvision.transforms import transforms
 
-from handmocap.hand_modules.test_options import TestOptions
-from handmocap.hand_modules.h3dw_model import H3DWModel
-from mocap_utils.coordconv import convert_smpl_to_bbox, convert_bbox_to_oriIm
+from .hand_modules.test_options import TestOptions
+from .hand_modules.h3dw_model import H3DWModel
+from ..mocap_utils.coordconv import convert_smpl_to_bbox, convert_bbox_to_oriIm
 
 
 class HandMocap:
@@ -27,7 +27,11 @@ class HandMocap:
         self.opt.single_branch = True
         self.opt.main_encoder = "resnet50"
         # self.opt.data_root = "/home/hjoo/dropbox/hand_yu/data/"
-        self.opt.model_root = "./extra_data"
+        
+        CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+        model_root = os.path.abspath(os.path.join(CURRENT_DIR, "..", "extra_data"))
+        
+        self.opt.model_root = model_root
         self.opt.smplx_model_file = os.path.join(smpl_dir,'SMPLX_NEUTRAL.pkl')
 
         self.opt.batchSize = 1
