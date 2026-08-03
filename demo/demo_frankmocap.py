@@ -12,20 +12,20 @@ import json
 import pickle
 
 ############# input parameters  #############
-from demo.demo_options import DemoOptions
-from bodymocap.body_mocap_api import BodyMocap
-from handmocap.hand_mocap_api import HandMocap
-import mocap_utils.demo_utils as demo_utils
-import mocap_utils.general_utils as gnu
-from mocap_utils.timer import Timer
+from .demo_options import DemoOptions
+from ..bodymocap.body_mocap_api import BodyMocap
+from ..handmocap.hand_mocap_api import HandMocap
+from ..mocap_utils import demo_utils as demo_utils
+from ..mocap_utils import general_utils as gnu
+from ..mocap_utils.timer import Timer
 from datetime import datetime
 
-from bodymocap.body_bbox_detector import BodyPoseEstimator
-from handmocap.hand_bbox_detector import HandBboxDetector
-from integration.copy_and_paste import integration_copy_paste
+from ..bodymocap.body_bbox_detector import BodyPoseEstimator
+from ..handmocap.hand_bbox_detector import HandBboxDetector
+from ..integration.copy_and_paste import integration_copy_paste
 
-import renderer.image_utils as imu
-from renderer.viewer2D import ImShow
+from ..renderer import image_utils as imu
+from ..renderer.viewer2D import ImShow
 
 
 def __filter_bbox_list(body_bbox_list, hand_bbox_list, single_person):

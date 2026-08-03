@@ -12,7 +12,7 @@ import torch
 import torchvision.transforms as transforms
 # from PIL import Image
 
-from bodymocap.body_bbox_detector import BodyPoseEstimator
+from ..bodymocap.body_bbox_detector import BodyPoseEstimator
 
 # Type agnostic hand detector
 from detectron2.config import get_cfg
@@ -29,11 +29,6 @@ hand_object_detector_path = './detectors/hand_object_detector'
 sys.path.append(hand_object_detector_path)
 from model.utils.config import cfg as cfgg
 
-from detectors.hand_object_detector.lib.model.rpn.bbox_transform import clip_boxes
-from detectors.hand_object_detector.lib.model.roi_layers import nms # might raise segmentation fault at the end of program
-from detectors.hand_object_detector.lib.model.rpn.bbox_transform import bbox_transform_inv
-from detectors.hand_object_detector.lib.model.utils.blob import im_list_to_blob
-from detectors.hand_object_detector.lib.model.faster_rcnn.resnet import resnet as detector_resnet 
 
 
 class Third_View_Detector(BodyPoseEstimator):
@@ -49,10 +44,17 @@ class Third_View_Detector(BodyPoseEstimator):
     
 
     def __load_hand_detector(self):
+        CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+        model_weights = os.path.join(CURRENT_DIR, "..", "extra_data", "hand_module", "hand_detector", "model_0529999.pth")
+        model_weights = os.path.abspath(model_weights)
+
+        rcnn = os.path.join(CURRENT_DIR, "..", "detectors", "hand_only_detector", "faster_rcnn_X_101_32x8d_FPN_3x_100DOH.yaml")
+        rcnn = os.path.abspath(rcnn)
+
          # load cfg and model
         cfg = get_cfg()
-        cfg.merge_from_file("detectors/hand_only_detector/faster_rcnn_X_101_32x8d_FPN_3x_100DOH.yaml")
-        cfg.MODEL.WEIGHTS = 'extra_data/hand_module/hand_detector/model_0529999.pth' # add model weight here
+        cfg.merge_from_file(rcnn)
+        cfg.MODEL.WEIGHTS = model_weights # add model weight here
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # 0.3 , use low thresh to increase recall
         self.hand_detector = DefaultPredictor(cfg)
 
@@ -147,6 +149,7 @@ class Ego_Centric_Detector(BodyPoseEstimator):
 
     # part of the code comes from https://github.com/ddshan/hand_object_detector
     def __load_hand_detector(self):
+        from detectors.hand_object_detector.lib.model.faster_rcnn.resnet import resnet as detector_resnet 
         classes = np.asarray(['__background__', 'targetobject', 'hand']) 
         fasterRCNN = detector_resnet(classes, 101, pretrained=False, class_agnostic=False)
         fasterRCNN.create_architecture()
@@ -166,6 +169,8 @@ class Ego_Centric_Detector(BodyPoseEstimator):
 
     # part of the code comes from https://github.com/ddshan/hand_object_detector/demo.py
     def __get_image_blob(self, im):
+        from ..detectors.hand_object_detector.lib.model.utils.blob import im_list_to_blob
+
         im_orig = im.astype(np.float32, copy=True)
         pixel_means = np.array([[[102.9801, 115.9465, 122.7717]]])
         im_orig -= pixel_means
@@ -195,6 +200,11 @@ class Ego_Centric_Detector(BodyPoseEstimator):
 
     # part of the code comes from https://github.com/ddshan/hand_object_detector/demo.py
     def __get_raw_hand_bbox(self, img):
+        
+        from ..detectors.hand_object_detector.lib.model.rpn.bbox_transform import clip_boxes
+        from ..detectors.hand_object_detector.lib.model.roi_layers import nms # might raise segmentation fault at the end of program
+        from ..detectors.hand_object_detector.lib.model.rpn.bbox_transform import bbox_transform_inv
+
         with torch.no_grad():
             im_data = torch.FloatTensor(1).cuda()
             im_info = torch.FloatTensor(1).cuda()

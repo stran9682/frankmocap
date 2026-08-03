@@ -1,6 +1,8 @@
 # Original code from SPIN: https://github.com/nkolot/SPIN
 
 
+import os
+
 import torch
 import numpy as np
 import smplx
@@ -11,7 +13,7 @@ from smplx import SMPLX as _SMPLX
 # from bodymocap.models.body_models import ModelOutput
 from smplx.lbs import vertices2joints
 
-from bodymocap import constants
+from .. import constants
 
 from collections import namedtuple
 ModelOutput = namedtuple('ModelOutput',
@@ -30,7 +32,9 @@ class SMPL(_SMPL):
     def __init__(self, *args, **kwargs):
         super(SMPL, self).__init__(*args, **kwargs)
         joints = [constants.JOINT_MAP[i] for i in constants.JOINT_NAMES]
-        JOINT_REGRESSOR_TRAIN_EXTRA = 'extra_data/body_module/data_from_spin//J_regressor_extra.npy'
+        CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+        JOINT_REGRESSOR_TRAIN_EXTRA = os.path.join(CURRENT_DIR, "..", "..", "extra_data", "body_module", "data_from_spin", "J_regressor_extra.npy")
+        JOINT_REGRESSOR_TRAIN_EXTRA = os.path.abspath(JOINT_REGRESSOR_TRAIN_EXTRA)
         J_regressor_extra = np.load(JOINT_REGRESSOR_TRAIN_EXTRA)
         self.register_buffer('J_regressor_extra', torch.tensor(J_regressor_extra, dtype=torch.float32))
         self.joint_map = torch.tensor(joints, dtype=torch.long)
@@ -58,7 +62,11 @@ class SMPLX(_SMPLX):
         kwargs['ext'] = 'pkl'       #We have pkl file
         super(SMPLX, self).__init__(*args, **kwargs)
         joints = [constants.JOINT_MAP[i] for i in constants.JOINT_NAMES]
-        JOINT_REGRESSOR_TRAIN_EXTRA_SMPLX = 'extra_data/body_module/J_regressor_extra_smplx.npy'
+
+        CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+        JOINT_REGRESSOR_TRAIN_EXTRA_SMPLX = os.path.join(CURRENT_DIR, "..", "..", "extra_data", "body_module", "J_regressor_extra_smplx.npy")
+        JOINT_REGRESSOR_TRAIN_EXTRA_SMPLX = os.path.abspath(JOINT_REGRESSOR_TRAIN_EXTRA_SMPLX)
+
         J_regressor_extra = np.load(JOINT_REGRESSOR_TRAIN_EXTRA_SMPLX)           #(9, 10475)
         self.register_buffer('J_regressor_extra', torch.tensor(J_regressor_extra, dtype=torch.float32))
         self.joint_map = torch.tensor(joints, dtype=torch.long)
