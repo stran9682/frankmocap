@@ -27,4 +27,4 @@ echo Downloading sample videos
 python scripts_py/download_sample_video.py
 
 hf download ragamounibatchu/frankmocap-hand-detector-weights --local-dir extra_data/hand_module/hand_detector/
-hf buckets cp hf://buckets/stran9682/smplx ./extra_data/smpl
+hf download stran9682/smplx_model --local-dir extra_data/smpl 
